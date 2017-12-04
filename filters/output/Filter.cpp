@@ -90,12 +90,7 @@ Filter::saveSettings(
 	using namespace boost::lambda;
 	
 	QDomElement filter_el(doc.createElement("output"));
-	writer.enumPages(
-		bind(
-			&Filter::writePageSettings,
-			this, boost::ref(doc), var(filter_el), _1, _2
-		)
-	);
+	writer.enumPages([&](PageId id, int nid) {writePageSettings(doc, filter_el, id, nid);});
 	
 	return filter_el;
 }

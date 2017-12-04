@@ -103,7 +103,7 @@ public:
 	Mat operator-() const;
 
 	T const* rawData() const { return data; }
-private:
+public:
 	Mat(AbstractAllocator<T>* alloc, T const* data, int rows, int cols)
 		: alloc(alloc), data(data), rows(rows), cols(cols) {}
 
@@ -124,7 +124,7 @@ public:
 	MatrixCalc() {}
 
 	mcalc::Mat<T> operator()(T const* data, int rows, int cols) {
-		return mcalc::Mat<T>(&m_alloc, data, rows, cols);
+        return mcalc::Mat<T>(&m_alloc, data, rows, cols);
 	}
 
 	template<size_t N>

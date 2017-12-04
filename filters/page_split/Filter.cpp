@@ -107,12 +107,7 @@ Filter::saveSettings(
 		layoutTypeToString(m_ptrSettings->defaultLayoutType())
 	);
 	
-	writer.enumImages(
-		bind(
-			&Filter::writeImageSettings,
-			this, boost::ref(doc), var(filter_el), _1, _2
-		)
-	);
+    writer.enumImages([&](ImageId id, int nid) {writeImageSettings(doc, filter_el, id, nid);});
 	
 	return filter_el;
 }

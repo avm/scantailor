@@ -488,9 +488,9 @@ ThumbnailSequence::Impl::Impl(
 	m_selectedThenUnselected(m_items.get<SelectedThenUnselectedTag>()),
 	m_pSelectionLeader(0)
 {
-	m_graphicsScene.setContextMenuEventCallback(
-		bind(&Impl::sceneContextMenuEvent, this, _1)
-	);
+    m_graphicsScene.setContextMenuEventCallback([&](QGraphicsSceneContextMenuEvent* event) {
+        sceneContextMenuEvent(event);
+    });
 }
 
 ThumbnailSequence::Impl::~Impl()
@@ -603,7 +603,7 @@ ThumbnailSequence::Impl::invalidateThumbnail(PageInfo const& page_info)
 {
 	ItemsById::iterator const id_it(m_itemsById.find(page_info.id()));
 	if (id_it != m_itemsById.end()) {
-		m_itemsById.modify(id_it, bind(&Item::pageInfo, _1) = page_info);
+        m_itemsById.modify(id_it, [&](Item& item) {item.pageInfo = page_info;});
 		invalidateThumbnailImpl(id_it);
 	}
 }
@@ -722,13 +722,10 @@ ThumbnailSequence::Impl::invalidateAllThumbnails()
 
 	// Sort pages in m_itemsInOrder using m_ptrOrderProvider.
 	if (m_ptrOrderProvider.get()) {
-		m_itemsInOrder.sort(
-			bind(
-				&PageOrderProvider::precedes, m_ptrOrderProvider.get(),
-				bind(&Item::pageId, _1), bind(&Item::incompleteThumbnail, _1),
-				bind(&Item::pageId, _2), bind(&Item::incompleteThumbnail, _2) 
-			)
-		);
+        m_itemsInOrder.sort([&](Item& item1, Item& item2) {
+            return m_ptrOrderProvider->precedes(item1.pageId(), item1.incompleteThumbnail,
+                                                item2.pageId(), item2.incompleteThumbnail);
+        });
 	}
 	
 	m_sceneRect = QRectF(0.0, 0.0, 0.0, 0.0);
