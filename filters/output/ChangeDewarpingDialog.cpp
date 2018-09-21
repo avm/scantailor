@@ -20,6 +20,7 @@
 #include "ChangeDewarpingDialog.moc"
 #include "PageSelectionAccessor.h"
 #include "QtSignalForwarder.h"
+#include <QButtonGroup>
 #include <boost/function.hpp>
 #include <boost/lambda/lambda.hpp>
 
